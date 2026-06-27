@@ -193,22 +193,25 @@ static int inserirVertices(SQLHDBC conexao, const Grafo *grafo) {
 
 static int inserirTubulacoes(SQLHDBC conexao, const Grafo *grafo) {
     int origem;
+    int destino;
     char sql[256];
-    Aresta *aresta;
 
     for (origem = 0; origem < grafo->totalVertices; origem++) {
-        aresta = grafo->vertices[origem].lista;
-        while (aresta != NULL) {
+        for (destino = 0; destino < grafo->totalVertices; destino++) {
+            if (grafo->matrizPesos[origem][destino] == 0) {
+                continue;
+            }
+
             snprintf(sql, sizeof(sql),
                      "INSERT INTO tubulacoes (origem, destino, peso, ativa) "
                      "VALUES (%d, %d, %d, %d)",
-                     origem, aresta->destino, aresta->peso, aresta->ativa);
+                     origem, destino,
+                     grafo->matrizPesos[origem][destino],
+                     grafo->matrizAtiva[origem][destino]);
 
             if (!executarSQL(conexao, sql)) {
                 return 0;
             }
-
-            aresta = aresta->proxima;
         }
     }
 

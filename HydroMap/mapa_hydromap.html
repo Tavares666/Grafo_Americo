@@ -27,25 +27,24 @@ header{padding:18px 28px;background:#173f4f;color:white;}h1{margin:0;font-size:2
 <span class="item"><span class="amostra" style="background:#63e6be"></span>Estacao elevatoria</span>
 <span class="item"><span class="amostra" style="background:#868e96"></span>Esgoto</span>
 <span class="item">Linha azul: ativa</span><span class="item">Linha vermelha tracejada: inativa</span><span class="item">Linha verde: caminho escolhido</span>
-<span class="item"><strong>Caminho calculado pelo Dijkstra destacado em verde</strong></span>
 </section>
 <section class="mapa">
 <svg width="1240" height="920" viewBox="0 0 1240 920" xmlns="http://www.w3.org/2000/svg">
 <defs><marker id="seta" markerWidth="12" markerHeight="12" refX="10" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L10,3 z" fill="#2477a8"/></marker><marker id="setaInativa" markerWidth="12" markerHeight="12" refX="10" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L10,3 z" fill="#c84343"/></marker><marker id="setaCaminho" markerWidth="12" markerHeight="12" refX="10" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L10,3 z" fill="#2f9e44"/></marker></defs>
+<line class="aresta" x1="80" y1="310" x2="260" y2="310"><title>ETA Principal -> Reservatorio Central | peso 120 | ativa</title></line>
+<text class="peso" x="170" y="304">120</text>
 <line class="aresta" x1="80" y1="310" x2="260" y2="500"><title>ETA Principal -> Estacao Elevatoria 1 | peso 140 | ativa</title></line>
 <text class="peso" x="170" y="399">140</text>
-<line class="aresta caminho" x1="80" y1="310" x2="260" y2="310"><title>ETA Principal -> Reservatorio Central | peso 120 | ativa</title></line>
-<text class="peso" x="170" y="304">120</text>
-<line class="aresta" x1="260" y1="310" x2="470" y2="850"><title>Reservatorio Central -> Bairro Centro | peso 45 | ativa</title></line>
-<text class="peso" x="365" y="574">45</text>
-<line class="aresta" x1="260" y1="310" x2="470" y2="690"><title>Reservatorio Central -> Reservatorio Oeste | peso 105 | ativa</title></line>
-<text class="peso" x="365" y="494">105</text>
-<line class="aresta" x1="260" y1="310" x2="470" y2="300"><title>Reservatorio Central -> Reservatorio Leste | peso 110 | ativa</title></line>
-<text class="peso" x="365" y="299">110</text>
+<line class="aresta" x1="260" y1="310" x2="470" y2="100"><title>Reservatorio Central -> Reservatorio Norte | peso 90 | ativa</title></line>
+<text class="peso" x="365" y="199">90</text>
 <line class="aresta" x1="260" y1="310" x2="470" y2="500"><title>Reservatorio Central -> Reservatorio Sul | peso 95 | ativa</title></line>
 <text class="peso" x="365" y="399">95</text>
-<line class="aresta caminho" x1="260" y1="310" x2="470" y2="100"><title>Reservatorio Central -> Reservatorio Norte | peso 90 | ativa</title></line>
-<text class="peso" x="365" y="199">90</text>
+<line class="aresta" x1="260" y1="310" x2="470" y2="300"><title>Reservatorio Central -> Reservatorio Leste | peso 110 | ativa</title></line>
+<text class="peso" x="365" y="299">110</text>
+<line class="aresta" x1="260" y1="310" x2="470" y2="690"><title>Reservatorio Central -> Reservatorio Oeste | peso 105 | ativa</title></line>
+<text class="peso" x="365" y="494">105</text>
+<line class="aresta" x1="260" y1="310" x2="470" y2="850"><title>Reservatorio Central -> Bairro Centro | peso 45 | ativa</title></line>
+<text class="peso" x="365" y="574">45</text>
 <line class="aresta" x1="470" y1="100" x2="680" y2="100"><title>Reservatorio Norte -> Bomba Zona Norte | peso 50 | ativa</title></line>
 <text class="peso" x="575" y="94">50</text>
 <line class="aresta" x1="470" y1="500" x2="680" y2="500"><title>Reservatorio Sul -> Bomba Zona Sul | peso 55 | ativa</title></line>
@@ -54,22 +53,22 @@ header{padding:18px 28px;background:#173f4f;color:white;}h1{margin:0;font-size:2
 <text class="peso" x="575" y="294">60</text>
 <line class="aresta" x1="470" y1="690" x2="680" y2="690"><title>Reservatorio Oeste -> Bomba Zona Oeste | peso 58 | ativa</title></line>
 <text class="peso" x="575" y="684">58</text>
-<line class="aresta" x1="680" y1="100" x2="910" y2="145"><title>Bomba Zona Norte -> Bairro Universitario | peso 65 | ativa</title></line>
-<text class="peso" x="795" y="116">65</text>
 <line class="aresta" x1="680" y1="100" x2="910" y2="55"><title>Bomba Zona Norte -> Bairro Industrial | peso 70 | ativa</title></line>
 <text class="peso" x="795" y="71">70</text>
-<line class="aresta" x1="680" y1="500" x2="910" y2="545"><title>Bomba Zona Sul -> Bairro Boa Esperanca | peso 75 | ativa</title></line>
-<text class="peso" x="795" y="516">75</text>
+<line class="aresta" x1="680" y1="100" x2="910" y2="145"><title>Bomba Zona Norte -> Bairro Universitario | peso 65 | ativa</title></line>
+<text class="peso" x="795" y="116">65</text>
 <line class="aresta" x1="680" y1="500" x2="910" y2="450"><title>Bomba Zona Sul -> Bairro Aeroporto | peso 80 | ativa</title></line>
 <text class="peso" x="795" y="469">80</text>
-<line class="aresta" x1="680" y1="300" x2="680" y2="390"><title>Bomba Zona Leste -> Estacao Elevatoria 2 | peso 72 | ativa</title></line>
-<text class="peso" x="680" y="339">72</text>
+<line class="aresta" x1="680" y1="500" x2="910" y2="545"><title>Bomba Zona Sul -> Bairro Boa Esperanca | peso 75 | ativa</title></line>
+<text class="peso" x="795" y="516">75</text>
 <line class="aresta" x1="680" y1="300" x2="910" y2="255"><title>Bomba Zona Leste -> Bairro Jardim das Aguas | peso 68 | ativa</title></line>
 <text class="peso" x="795" y="271">68</text>
-<line class="aresta" x1="680" y1="690" x2="910" y2="725"><title>Bomba Zona Oeste -> Bairro Vila Nova | peso 85 | ativa</title></line>
-<text class="peso" x="795" y="701">85</text>
+<line class="aresta" x1="680" y1="300" x2="680" y2="390"><title>Bomba Zona Leste -> Estacao Elevatoria 2 | peso 72 | ativa</title></line>
+<text class="peso" x="680" y="339">72</text>
 <line class="aresta" x1="680" y1="690" x2="910" y2="635"><title>Bomba Zona Oeste -> Bairro Sao Cristovao | peso 62 | ativa</title></line>
 <text class="peso" x="795" y="656">62</text>
+<line class="aresta" x1="680" y1="690" x2="910" y2="725"><title>Bomba Zona Oeste -> Bairro Vila Nova | peso 85 | ativa</title></line>
+<text class="peso" x="795" y="701">85</text>
 <line class="aresta" x1="470" y1="850" x2="1150" y2="390"><title>Bairro Centro -> Estacao de Esgoto Principal | peso 130 | ativa</title></line>
 <text class="peso" x="810" y="614">130</text>
 <line class="aresta" x1="910" y1="55" x2="1150" y2="390"><title>Bairro Industrial -> Estacao de Esgoto Principal | peso 150 | ativa</title></line>

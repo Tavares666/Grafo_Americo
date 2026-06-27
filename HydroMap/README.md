@@ -17,7 +17,7 @@ A rede foi modelada como um grafo dirigido e ponderado:
 - Pesos: distancia da tubulacao ou perda de carga hidraulica.
 - Status da aresta: ativa ou inativa, permitindo simular manutencao.
 
-O projeto usa lista de adjacencia, porque esse formato representa bem redes reais em que cada ponto se conecta apenas a alguns outros pontos.
+O projeto usa matriz de adjacencia. As linhas representam a origem, as colunas representam o destino e cada posicao guarda o peso da tubulacao. Quando o valor e zero, nao existe ligacao direta. Uma segunda matriz indica se a tubulacao esta ativa ou inativa.
 
 ## Vertices cadastrados
 
@@ -116,4 +116,3 @@ Escolha uma opcao: 9
 Mapa visual gerado com sucesso: mapa_hydromap.html
 Abra esse arquivo no navegador para ver a rede em formato grafico.
 ```
-

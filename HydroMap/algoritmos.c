@@ -60,9 +60,9 @@ int dijkstraComCaminho(const Grafo *grafo, int origem, int destino,
     int i;
     int contador;
     int atual;
+    int vizinho;
     int pilha[MAX_VERTICES];
     int tamanhoPilha = 0;
-    Aresta *aresta;
 
     *tamanhoCaminho = 0;
     *custoTotal = 0;
@@ -93,15 +93,14 @@ int dijkstraComCaminho(const Grafo *grafo, int origem, int destino,
         }
 
         processado[atual] = 1;
-        aresta = grafo->vertices[atual].lista;
-        while (aresta != NULL) {
-            if (aresta->ativa &&
-                !processado[aresta->destino] &&
-                dist[atual] + aresta->peso < dist[aresta->destino]) {
-                dist[aresta->destino] = dist[atual] + aresta->peso;
-                anterior[aresta->destino] = atual;
+        for (vizinho = 0; vizinho < grafo->totalVertices; vizinho++) {
+            if (grafo->matrizPesos[atual][vizinho] > 0 &&
+                grafo->matrizAtiva[atual][vizinho] &&
+                !processado[vizinho] &&
+                dist[atual] + grafo->matrizPesos[atual][vizinho] < dist[vizinho]) {
+                dist[vizinho] = dist[atual] + grafo->matrizPesos[atual][vizinho];
+                anterior[vizinho] = atual;
             }
-            aresta = aresta->proxima;
         }
     }
 
@@ -139,7 +138,7 @@ void bfs(const Grafo *grafo, int origem, int visitado[]) {
     int fim = 0;
     int i;
     int atual;
-    Aresta *aresta;
+    int vizinho;
 
     for (i = 0; i < grafo->totalVertices; i++) {
         visitado[i] = 0;
@@ -159,14 +158,14 @@ void bfs(const Grafo *grafo, int origem, int visitado[]) {
 
     while (inicio < fim) {
         atual = fila[inicio++];
-        aresta = grafo->vertices[atual].lista;
 
-        while (aresta != NULL) {
-            if (aresta->ativa && !visitado[aresta->destino]) {
-                visitado[aresta->destino] = 1;
-                fila[fim++] = aresta->destino;
+        for (vizinho = 0; vizinho < grafo->totalVertices; vizinho++) {
+            if (grafo->matrizPesos[atual][vizinho] > 0 &&
+                grafo->matrizAtiva[atual][vizinho] &&
+                !visitado[vizinho]) {
+                visitado[vizinho] = 1;
+                fila[fim++] = vizinho;
             }
-            aresta = aresta->proxima;
         }
     }
 }
@@ -187,7 +186,7 @@ void executarBFS(const Grafo *grafo, int origem) {
 }
 
 static void dfsRecursivo(const Grafo *grafo, int atual, int visitado[]) {
-    Aresta *aresta;
+    int vizinho;
 
     visitado[atual] = 1;
     printf("%2d - %s\n", atual, grafo->vertices[atual].nome);
@@ -196,12 +195,12 @@ static void dfsRecursivo(const Grafo *grafo, int atual, int visitado[]) {
      * DFS percorre em profundidade: segue um caminho ate onde for possivel
      * antes de voltar e tentar outra ramificacao da rede.
      */
-    aresta = grafo->vertices[atual].lista;
-    while (aresta != NULL) {
-        if (aresta->ativa && !visitado[aresta->destino]) {
-            dfsRecursivo(grafo, aresta->destino, visitado);
+    for (vizinho = 0; vizinho < grafo->totalVertices; vizinho++) {
+        if (grafo->matrizPesos[atual][vizinho] > 0 &&
+            grafo->matrizAtiva[atual][vizinho] &&
+            !visitado[vizinho]) {
+            dfsRecursivo(grafo, vizinho, visitado);
         }
-        aresta = aresta->proxima;
     }
 }
 

@@ -1,16 +1,19 @@
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 #include "grafo.h"
 
 void inicializarGrafo(Grafo *grafo) {
     int i;
+    int j;
 
     grafo->totalVertices = MAX_VERTICES;
     for (i = 0; i < MAX_VERTICES; i++) {
         grafo->vertices[i].nome[0] = '\0';
-        grafo->vertices[i].lista = NULL;
+        for (j = 0; j < MAX_VERTICES; j++) {
+            grafo->matrizPesos[i][j] = 0;
+            grafo->matrizAtiva[i][j] = 0;
+        }
     }
 }
 
@@ -24,24 +27,13 @@ void adicionarVertice(Grafo *grafo, int indice, const char *nome) {
 }
 
 void adicionarAresta(Grafo *grafo, int origem, int destino, int peso) {
-    Aresta *nova;
-
     if (origem < 0 || origem >= grafo->totalVertices ||
         destino < 0 || destino >= grafo->totalVertices) {
         return;
     }
 
-    nova = (Aresta *) malloc(sizeof(Aresta));
-    if (nova == NULL) {
-        printf("Erro: memoria insuficiente ao cadastrar tubulacao.\n");
-        exit(1);
-    }
-
-    nova->destino = destino;
-    nova->peso = peso;
-    nova->ativa = 1;
-    nova->proxima = grafo->vertices[origem].lista;
-    grafo->vertices[origem].lista = nova;
+    grafo->matrizPesos[origem][destino] = peso;
+    grafo->matrizAtiva[origem][destino] = 1;
 }
 
 void cadastrarRedeHydroMap(Grafo *grafo) {
@@ -114,101 +106,86 @@ void listarVertices(const Grafo *grafo) {
 }
 
 void listarTubulacoes(const Grafo *grafo) {
-    int i;
-    Aresta *atual;
+    int origem;
+    int destino;
 
     printf("\n--- Tubulacoes cadastradas ---\n");
-    for (i = 0; i < grafo->totalVertices; i++) {
-        atual = grafo->vertices[i].lista;
-        while (atual != NULL) {
+    for (origem = 0; origem < grafo->totalVertices; origem++) {
+        for (destino = 0; destino < grafo->totalVertices; destino++) {
+            if (grafo->matrizPesos[origem][destino] == 0) {
+                continue;
+            }
+
             printf("%2d %-30s -> %2d %-30s | peso: %3d | %s\n",
-                   i,
-                   grafo->vertices[i].nome,
-                   atual->destino,
-                   grafo->vertices[atual->destino].nome,
-                   atual->peso,
-                   atual->ativa ? "ativa" : "inativa");
-            atual = atual->proxima;
+                   origem,
+                   grafo->vertices[origem].nome,
+                   destino,
+                   grafo->vertices[destino].nome,
+                   grafo->matrizPesos[origem][destino],
+                   grafo->matrizAtiva[origem][destino] ? "ativa" : "inativa");
         }
     }
 }
 
 void imprimirRedeCompleta(const Grafo *grafo) {
-    int i;
-    Aresta *atual;
+    int origem;
+    int destino;
+    int temSaida;
 
-    printf("\n--- Rede completa em lista de adjacencia ---\n");
-    for (i = 0; i < grafo->totalVertices; i++) {
-        printf("%2d - %-30s: ", i, grafo->vertices[i].nome);
-        atual = grafo->vertices[i].lista;
-        if (atual == NULL) {
-            printf("sem saidas");
-        }
-        while (atual != NULL) {
+    printf("\n--- Rede completa em matriz de adjacencia ---\n");
+    for (origem = 0; origem < grafo->totalVertices; origem++) {
+        temSaida = 0;
+        printf("%2d - %-30s: ", origem, grafo->vertices[origem].nome);
+
+        for (destino = 0; destino < grafo->totalVertices; destino++) {
+            if (grafo->matrizPesos[origem][destino] == 0) {
+                continue;
+            }
+
+            temSaida = 1;
             printf("-> [%s, peso %d, %s] ",
-                   grafo->vertices[atual->destino].nome,
-                   atual->peso,
-                   atual->ativa ? "ativa" : "inativa");
-            atual = atual->proxima;
+                   grafo->vertices[destino].nome,
+                   grafo->matrizPesos[origem][destino],
+                   grafo->matrizAtiva[origem][destino] ? "ativa" : "inativa");
+        }
+
+        if (!temSaida) {
+            printf("sem saidas");
         }
         printf("\n");
     }
 }
 
 int bloquearAresta(Grafo *grafo, int origem, int destino) {
-    Aresta *atual;
-
     if (origem < 0 || origem >= grafo->totalVertices ||
         destino < 0 || destino >= grafo->totalVertices) {
         return 0;
     }
 
-    atual = grafo->vertices[origem].lista;
-    while (atual != NULL) {
-        if (atual->destino == destino) {
-            atual->ativa = 0;
-            return 1;
-        }
-        atual = atual->proxima;
+    if (grafo->matrizPesos[origem][destino] == 0) {
+        return 0;
     }
 
-    return 0;
+    grafo->matrizAtiva[origem][destino] = 0;
+    return 1;
 }
 
 int reativarAresta(Grafo *grafo, int origem, int destino) {
-    Aresta *atual;
-
     if (origem < 0 || origem >= grafo->totalVertices ||
         destino < 0 || destino >= grafo->totalVertices) {
         return 0;
     }
 
-    atual = grafo->vertices[origem].lista;
-    while (atual != NULL) {
-        if (atual->destino == destino) {
-            atual->ativa = 1;
-            return 1;
-        }
-        atual = atual->proxima;
+    if (grafo->matrizPesos[origem][destino] == 0) {
+        return 0;
     }
 
-    return 0;
+    grafo->matrizAtiva[origem][destino] = 1;
+    return 1;
 }
 
 void liberarGrafo(Grafo *grafo) {
-    int i;
-    Aresta *atual;
-    Aresta *proxima;
-
-    for (i = 0; i < grafo->totalVertices; i++) {
-        atual = grafo->vertices[i].lista;
-        while (atual != NULL) {
-            proxima = atual->proxima;
-            free(atual);
-            atual = proxima;
-        }
-        grafo->vertices[i].lista = NULL;
-    }
+    (void) grafo;
 }
 
 const char *tipoVertice(const char *nome) {

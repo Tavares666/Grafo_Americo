@@ -87,29 +87,36 @@ static int arestaEstaNoCaminho(int origem, int destino,
 static void escreverArestas(FILE *arquivo, const Grafo *grafo,
                             const int caminho[], int tamanhoCaminho) {
     int origem;
-    Aresta *aresta;
+    int destino;
 
     for (origem = 0; origem < grafo->totalVertices; origem++) {
-        aresta = grafo->vertices[origem].lista;
-        while (aresta != NULL) {
+        for (destino = 0; destino < grafo->totalVertices; destino++) {
             int x1 = posicoes[origem].x;
             int y1 = posicoes[origem].y;
-            int x2 = posicoes[aresta->destino].x;
-            int y2 = posicoes[aresta->destino].y;
-            int emCaminho = arestaEstaNoCaminho(origem, aresta->destino,
+            int x2;
+            int y2;
+            int emCaminho;
+
+            if (grafo->matrizPesos[origem][destino] == 0) {
+                continue;
+            }
+
+            x2 = posicoes[destino].x;
+            y2 = posicoes[destino].y;
+            emCaminho = arestaEstaNoCaminho(origem, destino,
                                                 caminho, tamanhoCaminho);
 
             fprintf(arquivo,
                     "<line class=\"aresta%s\" x1=\"%d\" y1=\"%d\" x2=\"%d\" y2=\"%d\"><title>%s -> %s | peso %d | %s</title></line>\n",
-                    emCaminho ? " caminho" : (aresta->ativa ? "" : " inativa"),
+                    emCaminho ? " caminho" : (grafo->matrizAtiva[origem][destino] ? "" : " inativa"),
                     x1, y1, x2, y2,
                     grafo->vertices[origem].nome,
-                    grafo->vertices[aresta->destino].nome,
-                    aresta->peso,
-                    aresta->ativa ? "ativa" : "inativa");
+                    grafo->vertices[destino].nome,
+                    grafo->matrizPesos[origem][destino],
+                    grafo->matrizAtiva[origem][destino] ? "ativa" : "inativa");
             fprintf(arquivo, "<text class=\"peso\" x=\"%d\" y=\"%d\">%d</text>\n",
-                    (x1 + x2) / 2, (y1 + y2) / 2 - 6, aresta->peso);
-            aresta = aresta->proxima;
+                    (x1 + x2) / 2, (y1 + y2) / 2 - 6,
+                    grafo->matrizPesos[origem][destino]);
         }
     }
 }
@@ -148,22 +155,10 @@ static void escreverMatrizAdjacencia(FILE *arquivo, const Grafo *grafo) {
         fprintf(arquivo, "<tr><td>%d %s</td>", origem, grafo->vertices[origem].nome);
 
         for (destino = 0; destino < grafo->totalVertices; destino++) {
-            Aresta *aresta = grafo->vertices[origem].lista;
-            int peso = 0;
-            int ativa = 0;
-
-            while (aresta != NULL) {
-                if (aresta->destino == destino) {
-                    peso = aresta->peso;
-                    ativa = aresta->ativa;
-                    break;
-                }
-                aresta = aresta->proxima;
-            }
-
-            if (peso > 0) {
+            if (grafo->matrizPesos[origem][destino] > 0) {
                 fprintf(arquivo, "<td class=\"%s\">%d</td>",
-                        ativa ? "valor" : "inativa-matriz", peso);
+                        grafo->matrizAtiva[origem][destino] ? "valor" : "inativa-matriz",
+                        grafo->matrizPesos[origem][destino]);
             } else {
                 fprintf(arquivo, "<td class=\"zero\">0</td>");
             }
