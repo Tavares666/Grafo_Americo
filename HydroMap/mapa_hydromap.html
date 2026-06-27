@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HydroMap - Mapa da Rede</title>
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#eef5f8;color:#16313a;}
+header{padding:18px 28px;background:#173f4f;color:white;}h1{margin:0;font-size:26px;}p{margin:6px 0 0;}
+.legenda{display:flex;gap:18px;flex-wrap:wrap;padding:14px 28px;background:#fff;border-bottom:1px solid #c9d7dd;}
+.item{display:flex;align-items:center;gap:7px;font-size:14px;}.amostra{width:16px;height:16px;border-radius:50%;display:inline-block;border:2px solid #244;}
+.mapa{padding:18px;overflow:auto;}svg{background:#fdfefe;border:1px solid #c9d7dd;box-shadow:0 2px 8px #0002;}
+.aresta{stroke:#2477a8;stroke-width:3;fill:none;marker-end:url(#seta);}.inativa{stroke:#c84343;stroke-dasharray:8 6;marker-end:url(#setaInativa);}.caminho{stroke:#2f9e44;stroke-width:6;marker-end:url(#setaCaminho);}
+.peso{font-size:13px;fill:#314b55;font-weight:bold;paint-order:stroke;stroke:#fff;stroke-width:4px;}
+.no circle{stroke:#173f4f;stroke-width:2;}.no text{font-size:12px;fill:#102c35;text-anchor:middle;font-weight:bold;paint-order:stroke;stroke:#fff;stroke-width:3px;}
+.eta circle{fill:#2f9e44;}.reservatorio circle{fill:#4dabf7;}.bomba circle{fill:#f59f00;}.bairro circle{fill:#d0bfff;}.elevatoria circle{fill:#63e6be;}.esgoto circle{fill:#868e96;}
+.matriz{padding:0 28px 28px;background:#eef5f8;}.matriz h2{margin:0 0 8px;font-size:22px;color:#173f4f;}.matriz p{margin:0 0 14px;color:#314b55;}.tabela-wrap{overflow:auto;background:#fff;border:1px solid #c9d7dd;box-shadow:0 2px 8px #0001;}table{border-collapse:collapse;min-width:980px;width:100%;font-size:12px;}th,td{border:1px solid #d7e3e8;padding:7px;text-align:center;white-space:nowrap;}th{background:#173f4f;color:#fff;position:sticky;top:0;}th:first-child{left:0;z-index:2;}td:first-child{background:#f3f8fa;font-weight:bold;text-align:left;position:sticky;left:0;}td.valor{background:#d9f6df;color:#1f6b31;font-weight:bold;}td.inativa-matriz{background:#ffe2e2;color:#9b2626;font-weight:bold;text-decoration:line-through;}td.zero{color:#91a3aa;}
+</style>
+</head>
+<body>
+<header><h1>HydroMap</h1><p>Mapa visual da rede dirigida e ponderada de agua e saneamento</p></header>
+<section class="legenda">
+<span class="item"><span class="amostra" style="background:#2f9e44"></span>ETA</span>
+<span class="item"><span class="amostra" style="background:#4dabf7"></span>Reservatorio</span>
+<span class="item"><span class="amostra" style="background:#f59f00"></span>Bomba</span>
+<span class="item"><span class="amostra" style="background:#d0bfff"></span>Bairro</span>
+<span class="item"><span class="amostra" style="background:#63e6be"></span>Estacao elevatoria</span>
+<span class="item"><span class="amostra" style="background:#868e96"></span>Esgoto</span>
+<span class="item">Linha azul: ativa</span><span class="item">Linha vermelha tracejada: inativa</span><span class="item">Linha verde: caminho escolhido</span>
+<span class="item"><strong>Caminho calculado pelo Dijkstra destacado em verde</strong></span>
+</section>
+<section class="mapa">
+<svg width="1240" height="920" viewBox="0 0 1240 920" xmlns="http://www.w3.org/2000/svg">
+<defs><marker id="seta" markerWidth="12" markerHeight="12" refX="10" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L10,3 z" fill="#2477a8"/></marker><marker id="setaInativa" markerWidth="12" markerHeight="12" refX="10" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L10,3 z" fill="#c84343"/></marker><marker id="setaCaminho" markerWidth="12" markerHeight="12" refX="10" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L10,3 z" fill="#2f9e44"/></marker></defs>
+<line class="aresta" x1="80" y1="310" x2="260" y2="500"><title>ETA Principal -> Estacao Elevatoria 1 | peso 140 | ativa</title></line>
+<text class="peso" x="170" y="399">140</text>
+<line class="aresta caminho" x1="80" y1="310" x2="260" y2="310"><title>ETA Principal -> Reservatorio Central | peso 120 | ativa</title></line>
+<text class="peso" x="170" y="304">120</text>
+<line class="aresta" x1="260" y1="310" x2="470" y2="850"><title>Reservatorio Central -> Bairro Centro | peso 45 | ativa</title></line>
+<text class="peso" x="365" y="574">45</text>
+<line class="aresta" x1="260" y1="310" x2="470" y2="690"><title>Reservatorio Central -> Reservatorio Oeste | peso 105 | ativa</title></line>
+<text class="peso" x="365" y="494">105</text>
+<line class="aresta" x1="260" y1="310" x2="470" y2="300"><title>Reservatorio Central -> Reservatorio Leste | peso 110 | ativa</title></line>
+<text class="peso" x="365" y="299">110</text>
+<line class="aresta" x1="260" y1="310" x2="470" y2="500"><title>Reservatorio Central -> Reservatorio Sul | peso 95 | ativa</title></line>
+<text class="peso" x="365" y="399">95</text>
+<line class="aresta caminho" x1="260" y1="310" x2="470" y2="100"><title>Reservatorio Central -> Reservatorio Norte | peso 90 | ativa</title></line>
+<text class="peso" x="365" y="199">90</text>
+<line class="aresta" x1="470" y1="100" x2="680" y2="100"><title>Reservatorio Norte -> Bomba Zona Norte | peso 50 | ativa</title></line>
+<text class="peso" x="575" y="94">50</text>
+<line class="aresta" x1="470" y1="500" x2="680" y2="500"><title>Reservatorio Sul -> Bomba Zona Sul | peso 55 | ativa</title></line>
+<text class="peso" x="575" y="494">55</text>
+<line class="aresta" x1="470" y1="300" x2="680" y2="300"><title>Reservatorio Leste -> Bomba Zona Leste | peso 60 | ativa</title></line>
+<text class="peso" x="575" y="294">60</text>
+<line class="aresta" x1="470" y1="690" x2="680" y2="690"><title>Reservatorio Oeste -> Bomba Zona Oeste | peso 58 | ativa</title></line>
+<text class="peso" x="575" y="684">58</text>
+<line class="aresta" x1="680" y1="100" x2="910" y2="145"><title>Bomba Zona Norte -> Bairro Universitario | peso 65 | ativa</title></line>
+<text class="peso" x="795" y="116">65</text>
+<line class="aresta" x1="680" y1="100" x2="910" y2="55"><title>Bomba Zona Norte -> Bairro Industrial | peso 70 | ativa</title></line>
+<text class="peso" x="795" y="71">70</text>
+<line class="aresta" x1="680" y1="500" x2="910" y2="545"><title>Bomba Zona Sul -> Bairro Boa Esperanca | peso 75 | ativa</title></line>
+<text class="peso" x="795" y="516">75</text>
+<line class="aresta" x1="680" y1="500" x2="910" y2="450"><title>Bomba Zona Sul -> Bairro Aeroporto | peso 80 | ativa</title></line>
+<text class="peso" x="795" y="469">80</text>
+<line class="aresta" x1="680" y1="300" x2="680" y2="390"><title>Bomba Zona Leste -> Estacao Elevatoria 2 | peso 72 | ativa</title></line>
+<text class="peso" x="680" y="339">72</text>
+<line class="aresta" x1="680" y1="300" x2="910" y2="255"><title>Bomba Zona Leste -> Bairro Jardim das Aguas | peso 68 | ativa</title></line>
+<text class="peso" x="795" y="271">68</text>
+<line class="aresta" x1="680" y1="690" x2="910" y2="725"><title>Bomba Zona Oeste -> Bairro Vila Nova | peso 85 | ativa</title></line>
+<text class="peso" x="795" y="701">85</text>
+<line class="aresta" x1="680" y1="690" x2="910" y2="635"><title>Bomba Zona Oeste -> Bairro Sao Cristovao | peso 62 | ativa</title></line>
+<text class="peso" x="795" y="656">62</text>
+<line class="aresta" x1="470" y1="850" x2="1150" y2="390"><title>Bairro Centro -> Estacao de Esgoto Principal | peso 130 | ativa</title></line>
+<text class="peso" x="810" y="614">130</text>
+<line class="aresta" x1="910" y1="55" x2="1150" y2="390"><title>Bairro Industrial -> Estacao de Esgoto Principal | peso 150 | ativa</title></line>
+<text class="peso" x="1030" y="216">150</text>
+<line class="aresta" x1="910" y1="450" x2="1150" y2="390"><title>Bairro Aeroporto -> Estacao de Esgoto Principal | peso 160 | ativa</title></line>
+<text class="peso" x="1030" y="414">160</text>
+<line class="aresta" x1="910" y1="145" x2="1150" y2="390"><title>Bairro Universitario -> Estacao de Esgoto Principal | peso 145 | ativa</title></line>
+<text class="peso" x="1030" y="261">145</text>
+<line class="aresta" x1="910" y1="255" x2="1150" y2="390"><title>Bairro Jardim das Aguas -> Estacao de Esgoto Principal | peso 155 | ativa</title></line>
+<text class="peso" x="1030" y="316">155</text>
+<line class="aresta" x1="910" y1="635" x2="1150" y2="390"><title>Bairro Sao Cristovao -> Estacao de Esgoto Principal | peso 135 | ativa</title></line>
+<text class="peso" x="1030" y="506">135</text>
+<line class="aresta" x1="910" y1="545" x2="1150" y2="390"><title>Bairro Boa Esperanca -> Estacao de Esgoto Principal | peso 142 | ativa</title></line>
+<text class="peso" x="1030" y="461">142</text>
+<line class="aresta" x1="910" y1="725" x2="1150" y2="390"><title>Bairro Vila Nova -> Estacao de Esgoto Principal | peso 148 | ativa</title></line>
+<text class="peso" x="1030" y="551">148</text>
+<line class="aresta" x1="260" y1="500" x2="470" y2="500"><title>Estacao Elevatoria 1 -> Reservatorio Sul | peso 100 | ativa</title></line>
+<text class="peso" x="365" y="494">100</text>
+<line class="aresta" x1="680" y1="390" x2="470" y2="690"><title>Estacao Elevatoria 2 -> Reservatorio Oeste | peso 115 | ativa</title></line>
+<text class="peso" x="575" y="534">115</text>
+<g class="no eta"><circle cx="80" cy="310" r="24"><title>0 - ETA Principal</title></circle><text x="80" y="315">0</text><text x="80" y="352">ETA Principal</text></g>
+<g class="no reservatorio"><circle cx="260" cy="310" r="24"><title>1 - Reservatorio Central</title></circle><text x="260" y="315">1</text><text x="260" y="352">Reservatorio Central</text></g>
+<g class="no reservatorio"><circle cx="470" cy="100" r="24"><title>2 - Reservatorio Norte</title></circle><text x="470" y="105">2</text><text x="470" y="142">Reservatorio Norte</text></g>
+<g class="no reservatorio"><circle cx="470" cy="500" r="24"><title>3 - Reservatorio Sul</title></circle><text x="470" y="505">3</text><text x="470" y="542">Reservatorio Sul</text></g>
+<g class="no reservatorio"><circle cx="470" cy="300" r="24"><title>4 - Reservatorio Leste</title></circle><text x="470" y="305">4</text><text x="470" y="342">Reservatorio Leste</text></g>
+<g class="no reservatorio"><circle cx="470" cy="690" r="24"><title>5 - Reservatorio Oeste</title></circle><text x="470" y="695">5</text><text x="470" y="732">Reservatorio Oeste</text></g>
+<g class="no bomba"><circle cx="680" cy="100" r="24"><title>6 - Bomba Zona Norte</title></circle><text x="680" y="105">6</text><text x="680" y="142">Bomba Zona Norte</text></g>
+<g class="no bomba"><circle cx="680" cy="500" r="24"><title>7 - Bomba Zona Sul</title></circle><text x="680" y="505">7</text><text x="680" y="542">Bomba Zona Sul</text></g>
+<g class="no bomba"><circle cx="680" cy="300" r="24"><title>8 - Bomba Zona Leste</title></circle><text x="680" y="305">8</text><text x="680" y="342">Bomba Zona Leste</text></g>
+<g class="no bomba"><circle cx="680" cy="690" r="24"><title>9 - Bomba Zona Oeste</title></circle><text x="680" y="695">9</text><text x="680" y="732">Bomba Zona Oeste</text></g>
+<g class="no bairro"><circle cx="470" cy="850" r="24"><title>10 - Bairro Centro</title></circle><text x="470" y="855">10</text><text x="470" y="892">Bairro Centro</text></g>
+<g class="no bairro"><circle cx="910" cy="55" r="24"><title>11 - Bairro Industrial</title></circle><text x="910" y="60">11</text><text x="910" y="97">Bairro Industrial</text></g>
+<g class="no bairro"><circle cx="910" cy="450" r="24"><title>12 - Bairro Aeroporto</title></circle><text x="910" y="455">12</text><text x="910" y="492">Bairro Aeroporto</text></g>
+<g class="no bairro"><circle cx="910" cy="145" r="24"><title>13 - Bairro Universitario</title></circle><text x="910" y="150">13</text><text x="910" y="187">Bairro Universitario</text></g>
+<g class="no bairro"><circle cx="910" cy="255" r="24"><title>14 - Bairro Jardim das Aguas</title></circle><text x="910" y="260">14</text><text x="910" y="297">Bairro Jardim das Aguas</text></g>
+<g class="no bairro"><circle cx="910" cy="635" r="24"><title>15 - Bairro Sao Cristovao</title></circle><text x="910" y="640">15</text><text x="910" y="677">Bairro Sao Cristovao</text></g>
+<g class="no bairro"><circle cx="910" cy="545" r="24"><title>16 - Bairro Boa Esperanca</title></circle><text x="910" y="550">16</text><text x="910" y="587">Bairro Boa Esperanca</text></g>
+<g class="no bairro"><circle cx="910" cy="725" r="24"><title>17 - Bairro Vila Nova</title></circle><text x="910" y="730">17</text><text x="910" y="767">Bairro Vila Nova</text></g>
+<g class="no elevatoria"><circle cx="260" cy="500" r="24"><title>18 - Estacao Elevatoria 1</title></circle><text x="260" y="505">18</text><text x="260" y="542">Estacao Elevatoria 1</text></g>
+<g class="no elevatoria"><circle cx="680" cy="390" r="24"><title>19 - Estacao Elevatoria 2</title></circle><text x="680" y="395">19</text><text x="680" y="432">Estacao Elevatoria 2</text></g>
+<g class="no esgoto"><circle cx="1150" cy="390" r="24"><title>20 - Estacao de Esgoto Principal</title></circle><text x="1150" y="395">20</text><text x="1150" y="432">Estacao de Esgoto Principal</text></g>
+</svg>
+</section>
+<section class="matriz">
+<h2>Matriz de adjacencia</h2>
+<p>Linhas indicam a origem, colunas indicam o destino. O valor mostra o peso da ligacao; zero significa que nao existe ligacao direta.</p>
+<div class="tabela-wrap">
+<table>
+<thead><tr><th>Origem / Destino</th><th>0</th><th>1</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th><th>11</th><th>12</th><th>13</th><th>14</th><th>15</th><th>16</th><th>17</th><th>18</th><th>19</th><th>20</th></tr></thead>
+<tbody>
+<tr><td>0 ETA Principal</td><td class="zero">0</td><td class="valor">120</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="valor">140</td><td class="zero">0</td><td class="zero">0</td></tr>
+<tr><td>1 Reservatorio Central</td><td class="zero">0</td><td class="zero">0</td><td class="valor">90</td><td class="valor">95</td><td class="valor">110</td><td class="valor">105</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="valor">45</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td></tr>
+<tr><td>2 Reservatorio Norte</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="valor">50</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td></tr>
+<tr><td>3 Reservatorio Sul</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="valor">55</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td></tr>
+<tr><td>4 Reservatorio Leste</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="valor">60</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td></tr>
+<tr><td>5 Reservatorio Oeste</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="valor">58</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td></tr>
+<tr><td>6 Bomba Zona Norte</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="valor">70</td><td class="zero">0</td><td class="valor">65</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td></tr>
+<tr><td>7 Bomba Zona Sul</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="valor">80</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="valor">75</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td></tr>
+<tr><td>8 Bomba Zona Leste</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="valor">68</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="valor">72</td><td class="zero">0</td></tr>
+<tr><td>9 Bomba Zona Oeste</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="valor">62</td><td class="zero">0</td><td class="valor">85</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td></tr>
+<tr><td>10 Bairro Centro</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="valor">130</td></tr>
+<tr><td>11 Bairro Industrial</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="valor">150</td></tr>
+<tr><td>12 Bairro Aeroporto</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="valor">160</td></tr>
+<tr><td>13 Bairro Universitario</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="valor">145</td></tr>
+<tr><td>14 Bairro Jardim das Aguas</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="valor">155</td></tr>
+<tr><td>15 Bairro Sao Cristovao</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="valor">135</td></tr>
+<tr><td>16 Bairro Boa Esperanca</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="valor">142</td></tr>
+<tr><td>17 Bairro Vila Nova</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="valor">148</td></tr>
+<tr><td>18 Estacao Elevatoria 1</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="valor">100</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td></tr>
+<tr><td>19 Estacao Elevatoria 2</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="valor">115</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td></tr>
+<tr><td>20 Estacao de Esgoto Principal</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td><td class="zero">0</td></tr>
+</tbody>
+</table>
+</div>
+</section>
+</body>
+</html>
